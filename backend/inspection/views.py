@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseBadRequest, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_http_methods
 
@@ -52,7 +52,8 @@ def list_view(request):
 @login_required
 def detail_view(request, pk):
     row = get_object_or_404(Inspection, pk=pk)
-    return render(request, "detail.html", {"row": row})
+    retests = row.retests.order_by("id")
+    return render(request, "detail.html", {"row": row, "retests": retests})
 
 
 @login_required
@@ -84,3 +85,47 @@ def create_view(request):
             )
             return redirect("detail", pk=row.pk)
     return render(request, "form.html", {"error": error})
+
+
+@login_required
+@require_http_methods(["GET", "POST"])
+def retest_create_view(request, pk):
+    if not _can_write(request.user):
+        return HttpResponseForbidden("仅巡检员可开复测")
+    origin = get_object_or_404(Inspection, pk=pk)
+    if origin.verdict != "不合格":
+        return HttpResponseBadRequest("仅不合格记录可开复测")
+    root = origin.retest_of or origin
+    error = ""
+    if request.method == "POST":
+        try:
+            measured = float(request.POST["measured_cd"])
+            required = float(request.POST["required_cd"])
+            bearing = float(request.POST["bearing_error_deg"])
+        except (KeyError, ValueError):
+            error = "请填三项数值"
+        else:
+            verdict, note = judge(measured, required, bearing)
+            row = Inspection.objects.create(
+                aid_code=root.aid_code,
+                measured_cd=measured,
+                required_cd=required,
+                bearing_error_deg=bearing,
+                verdict=verdict,
+                note=note,
+                retest_of=root,
+                created_by=request.user.username,
+            )
+            return redirect("detail", pk=row.pk)
+    return render(request, "retest_form.html", {"error": error, "root": root})
+
+
+@login_required
+def chain_view(request):
+    roots = (
+        Inspection.objects.filter(retest_of__isnull=True, retests__isnull=False)
+        .distinct()
+        .order_by("id")
+    )
+    chains = [(root, list(root.retests.order_by("id"))) for root in roots]
+    return render(request, "chain.html", {"chains": chains})

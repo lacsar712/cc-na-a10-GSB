@@ -8,6 +8,14 @@ class Inspection(models.Model):
     bearing_error_deg = models.FloatField("方位偏差")
     verdict = models.CharField("结论", max_length=20)
     note = models.CharField("说明", max_length=200)
+    retest_of = models.ForeignKey(
+        "self",
+        verbose_name="所依原单",
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+        related_name="retests",
+    )
     created_by = models.CharField("登记人", max_length=64)
     created_at = models.DateTimeField(auto_now_add=True)
 

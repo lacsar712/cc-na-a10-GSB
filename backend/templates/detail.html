@@ -1,8 +1,21 @@
 {% extends "base.html" %}
 {% block body %}
-<h1>{{ row.aid_code }}</h1>
+<h1>{{ row.aid_code }}{% if row.retest_of %} <span class="tag">复测</span>{% endif %}</h1>
 <p class="{% if row.verdict == '合格' %}ok{% else %}bad{% endif %}">{{ row.verdict }} · {{ row.note }}</p>
 <p>实测光强 {{ row.measured_cd }}，要求 {{ row.required_cd }}，方位偏差 {{ row.bearing_error_deg }} 度</p>
 <p>登记人 {{ row.created_by }}</p>
+{% if row.retest_of %}
+<p>本单是复测，所依原单 <a href="{% url 'detail' row.retest_of.pk %}">#{{ row.retest_of.pk }} {{ row.retest_of.aid_code }}</a></p>
+{% endif %}
+{% if retests %}
+<p>本单的后继复测：
+  {% for r in retests %}
+    <a href="{% url 'detail' r.pk %}">#{{ r.pk }}</a>（{{ r.verdict }}）{% if not forloop.last %}、{% endif %}
+  {% endfor %}
+</p>
+{% endif %}
+{% if can_write and row.verdict == '不合格' %}
+<p><a class="btn" href="{% url 'retest' row.pk %}">开复测</a></p>
+{% endif %}
 <p><a href="{% url 'list' %}">返回列表</a></p>
 {% endblock %}

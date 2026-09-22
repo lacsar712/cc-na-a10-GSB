@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}复测链 · 航标灯光巡检台{% endblock %}
+{% block body %}
+<h1>复测链</h1>
+{% for root, retests in chains %}
+  <section class="chain">
+    <h2>{{ root.aid_code }}</h2>
+    <div class="chain-items">
+      <span class="node">
+        <a href="{% url 'detail' root.pk %}">#{{ root.pk }} 原单</a>
+        <em class="{% if root.verdict == '合格' %}ok{% else %}bad{% endif %}">{{ root.verdict }}</em>
+      </span>
+      {% for row in retests %}
+        <span class="arrow">→</span>
+        <span class="node">
+          <a href="{% url 'detail' row.pk %}">#{{ row.pk }} 复测</a>
+          <em class="{% if row.verdict == '合格' %}ok{% else %}bad{% endif %}">{{ row.verdict }}</em>
+        </span>
+      {% endfor %}
+    </div>
+  </section>
+{% empty %}
+  <p>还没有复测链</p>
+{% endfor %}
+{% endblock %}

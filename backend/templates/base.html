@@ -16,6 +16,13 @@
     input { width: 100%; padding: 8px; box-sizing: border-box; }
     button { margin-top: 14px; background: #0f3d3e; color: #fff; border: 0; padding: 8px 16px; }
     .err { color: #9b1c1c; }
+    .tag { background: #e3ede9; color: #0f3d3e; font-size: 12px; padding: 1px 6px; border-radius: 3px; }
+    a.btn { display: inline-block; background: #0f3d3e; color: #fff; padding: 8px 16px; text-decoration: none; }
+    .chain { background: #fff; padding: 12px 16px; margin-bottom: 14px; }
+    .chain h2 { margin: 0 0 8px; font-size: 17px; }
+    .chain-items { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .chain-items .arrow { color: #6b7f7a; }
+    .chain-items .node em { font-style: normal; margin-left: 4px; }
   </style>
 </head>
 <body>
@@ -23,6 +30,7 @@
     <strong>航标灯光巡检台</strong>
     {% if user.is_authenticated %}
       <a href="{% url 'list' %}">巡检记录</a>
+      <a href="{% url 'chain' %}">复测链</a>
       {% if can_write %}<a href="{% url 'create' %}">登记</a>{% endif %}
       <span style="margin-left:auto">{{ user.username }}</span>
       <a href="{% url 'logout' %}">退出</a>

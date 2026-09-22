@@ -6,7 +6,7 @@
   <tbody>
   {% for row in rows %}
     <tr>
-      <td>{{ row.aid_code }}</td>
+      <td>{{ row.aid_code }}{% if row.retest_of_id %} <span class="tag">复测</span>{% endif %}</td>
       <td>{{ row.measured_cd }}</td>
       <td class="{% if row.verdict == '合格' %}ok{% else %}bad{% endif %}">{{ row.verdict }}</td>
       <td>{{ row.note }}</td>

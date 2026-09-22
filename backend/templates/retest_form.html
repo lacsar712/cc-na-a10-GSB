@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}开复测 · 航标灯光巡检台{% endblock %}
+{% block body %}
+<h1>开复测</h1>
+<p>所依原单 <a href="{% url 'detail' root.pk %}">#{{ root.pk }} {{ root.aid_code }}</a>（{{ root.verdict }} · {{ root.note }}），原单保留在总表。</p>
+{% if error %}<p class="err">{{ error }}</p>{% endif %}
+<form class="card" method="post">
+  {% csrf_token %}
+  <label>航标编号</label>
+  <input value="{{ root.aid_code }}" disabled />
+  <label>实测光强（坎德拉）</label>
+  <input name="measured_cd" type="number" step="0.1" />
+  <label>要求光强</label>
+  <input name="required_cd" type="number" step="0.1" value="{{ root.required_cd }}" />
+  <label>方位偏差（度）</label>
+  <input name="bearing_error_deg" type="number" step="0.1" value="0" />
+  <button type="submit">提交复测</button>
+</form>
+{% endblock %}
