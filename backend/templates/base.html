@@ -11,11 +11,20 @@
     table { width: 100%; border-collapse: collapse; background: #fff; }
     th, td { border-bottom: 1px solid #d5e0dc; padding: 8px 10px; text-align: left; }
     .ok { color: #0b6b3a; } .bad { color: #9b1c1c; }
+    .tag { display: inline-block; background: #e3f1ee; color: #0f3d3e; border-radius: 3px; padding: 0 6px; font-size: 12px; }
     form.card { background: #fff; padding: 16px; max-width: 420px; }
     label { display: block; margin: 10px 0 4px; }
     input { width: 100%; padding: 8px; box-sizing: border-box; }
     button { margin-top: 14px; background: #0f3d3e; color: #fff; border: 0; padding: 8px 16px; }
+    .act { display: inline-block; background: #0f3d3e; color: #fff; text-decoration: none; padding: 8px 16px; }
     .err { color: #9b1c1c; }
+    .hint { color: #4a5a56; }
+    section.chain { background: #fff; padding: 12px 16px; margin-bottom: 18px; }
+    .chain-children { margin: 6px 0 6px 28px; border-left: 2px solid #b9cfc9; padding-left: 16px; }
+    .chain-node { padding: 6px 10px; margin: 4px 0; background: #f4f8f7; border-left: 4px solid #0f3d3e; }
+    .chain-node.bad-border { border-left-color: #9b1c1c; }
+    .chain-node.ok-border { border-left-color: #0b6b3a; }
+    .arrow { color: #0f3d3e; margin: 2px 0; }
   </style>
 </head>
 <body>
@@ -23,6 +32,7 @@
     <strong>航标灯光巡检台</strong>
     {% if user.is_authenticated %}
       <a href="{% url 'list' %}">巡检记录</a>
+      <a href="{% url 'chain' %}">复测链</a>
       {% if can_write %}<a href="{% url 'create' %}">登记</a>{% endif %}
       <span style="margin-left:auto">{{ user.username }}</span>
       <a href="{% url 'logout' %}">退出</a>

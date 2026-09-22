@@ -6,11 +6,22 @@
   <tbody>
   {% for row in rows %}
     <tr>
-      <td>{{ row.aid_code }}</td>
+      <td>
+        {{ row.aid_code }}
+        {% if row.is_retest %}
+          <span class="tag">复测</span>
+          （原单 <a href="{% url 'detail' row.origin_id %}">#{{ row.origin_id }}</a>）
+        {% endif %}
+      </td>
       <td>{{ row.measured_cd }}</td>
       <td class="{% if row.verdict == '合格' %}ok{% else %}bad{% endif %}">{{ row.verdict }}</td>
       <td>{{ row.note }}</td>
-      <td><a href="{% url 'detail' row.pk %}">详情</a></td>
+      <td>
+        <a href="{% url 'detail' row.pk %}">详情</a>
+        {% if can_write and row.verdict == '不合格' %}
+          · <a href="{% url 'retest_create' row.pk %}">开复测</a>
+        {% endif %}
+      </td>
     </tr>
   {% empty %}
     <tr><td colspan="5">还没有记录</td></tr>

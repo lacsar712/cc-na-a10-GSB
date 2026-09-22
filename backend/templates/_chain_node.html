@@ -1,0 +1,14 @@
+<div class="chain-node {% if node.verdict == '合格' %}ok-border{% else %}bad-border{% endif %}">
+  <a href="{% url 'detail' node.pk %}">#{{ node.pk }}</a>
+  {{ node.aid_code }}
+  {% if node.is_retest %}<span class="tag">复测</span>{% endif %}
+  <span class="{% if node.verdict == '合格' %}ok{% else %}bad{% endif %}">{{ node.verdict }}</span>
+  · 实测 {{ node.measured_cd }}／要求 {{ node.required_cd }} · 偏差 {{ node.bearing_error_deg }}°
+  · {{ node.note }} · {{ node.created_by }}
+</div>
+{% for child in node.retests_chronological %}
+<div class="chain-children">
+  <div class="arrow">↓</div>
+  {% include "_chain_node.html" with node=child %}
+</div>
+{% endfor %}

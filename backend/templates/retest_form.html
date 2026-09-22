@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block body %}
+<h1>开复测单</h1>
+<p>
+  所依原单 <a href="{% url 'detail' origin.pk %}">#{{ origin.pk }}</a>：
+  {{ origin.aid_code }} · 原判定
+  <span class="bad">{{ origin.verdict }}（{{ origin.note }}）</span>
+</p>
+<p>航标编号沿用原单 <strong>{{ origin.aid_code }}</strong>，要求光强 {{ origin.required_cd }} 坎德拉。</p>
+{% if error %}<p class="err">{{ error }}</p>{% endif %}
+<form class="card" method="post">
+  {% csrf_token %}
+  <label>复测实测光强（坎德拉）</label>
+  <input name="measured_cd" type="number" step="0.1" />
+  <label>复测方位偏差（度）</label>
+  <input name="bearing_error_deg" type="number" step="0.1" value="0" />
+  <button type="submit">提交复测</button>
+</form>
+<p><a href="{% url 'detail' origin.pk %}">返回原单</a></p>
+{% endblock %}

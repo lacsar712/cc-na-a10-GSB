@@ -1,8 +1,33 @@
 {% extends "base.html" %}
 {% block body %}
-<h1>{{ row.aid_code }}</h1>
+<h1>
+  {{ row.aid_code }}
+  {% if row.is_retest %}<span class="tag">复测</span>{% endif %}
+</h1>
+{% if row.is_retest %}
+  <p>所依原单：<a href="{% url 'detail' row.origin_id %}">#{{ row.origin_id }} {{ row.origin.aid_code }}</a></p>
+{% endif %}
 <p class="{% if row.verdict == '合格' %}ok{% else %}bad{% endif %}">{{ row.verdict }} · {{ row.note }}</p>
 <p>实测光强 {{ row.measured_cd }}，要求 {{ row.required_cd }}，方位偏差 {{ row.bearing_error_deg }} 度</p>
 <p>登记人 {{ row.created_by }}</p>
-<p><a href="{% url 'list' %}">返回列表</a></p>
+
+{% with retests=row.retests_chronological %}
+{% if retests %}
+<h2>后继复测</h2>
+<ul>
+  {% for r in retests %}
+    <li>
+      <a href="{% url 'detail' r.pk %}">#{{ r.pk }}</a>
+      <span class="{% if r.verdict == '合格' %}ok{% else %}bad{% endif %}">{{ r.verdict }}</span>
+      · {{ r.note }}
+    </li>
+  {% endfor %}
+</ul>
+{% endif %}
+{% endwith %}
+
+{% if can_write and row.verdict == '不合格' %}
+  <p><a class="act" href="{% url 'retest_create' row.pk %}">开复测单</a></p>
+{% endif %}
+<p><a href="{% url 'chain' %}">查看复测链</a> · <a href="{% url 'list' %}">返回列表</a></p>
 {% endblock %}

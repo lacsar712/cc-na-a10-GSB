@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block body %}
+<h1>复测链</h1>
+<p class="hint">每条链自原单起，箭头指向后继复测；编号可点进详情。</p>
+{% for root in roots %}
+<section class="chain">
+  <h2>链 {{ forloop.counter }} · {{ root.aid_code }}</h2>
+  {% include "_chain_node.html" with node=root %}
+</section>
+{% empty %}
+<p>还没有记录</p>
+{% endfor %}
+{% endblock %}
